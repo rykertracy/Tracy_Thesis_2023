@@ -1,5 +1,6 @@
+%function assign_magnitude(events_path)
 % Define the path to the directory containing the subdirectories
-directory_path = 'D:\Seismic Data\sorted_by_events';
+directory_path = events_path;
 
 % Get a list of all subdirectories in the directory
 subdirs = dir(directory_path);
@@ -27,4 +28,5 @@ for i = 1:length(subdirs)
         file_path = fullfile(subdir_path, files(j).name);
         movefile(file_path, new_subdir_path);
     end
+end
 end
