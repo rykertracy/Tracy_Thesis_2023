@@ -3,3 +3,5 @@ Notes.txt
 test/**
 !test/main.asv
 !test/main.m
+!test/qc_main.asv
+!test/qc_main.m

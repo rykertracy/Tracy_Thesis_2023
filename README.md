@@ -10,6 +10,9 @@ Then: Update documentation on all programs. Commit each change to a program with
 
 Then: Begin refactoring programs. This includes making them more user friendly, combining files where possible, and amplifying effeciency.
 
+## Programs 
+qc_main(master_path).m - Is a combination of functions that will allow for a more streamline QC process. Elements of the combined files have been removed based on lack of use, like event_information tables that were unused. Do access these, see the archive folder.
+
 ## Original Workflow
 Data downloaded from PyWeed was originally in SAC format. The first step was to translate from SAC to MAT through the "SACtoMATB_2023Z.m" program. "rdsac.m" and "SACTOOLB_2023Z.m" are depended on by the program, and I did not write them--the first came from Mathworks and the second from a previous Texas Tech student. "plot_data_map_RT_2023Z.m" can spatially display the events and stations.
 
