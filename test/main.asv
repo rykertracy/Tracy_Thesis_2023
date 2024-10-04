@@ -1,0 +1,111 @@
+%% Documentation
+%{ This program is developed for Ryker Tracy Thesis 2023, and aims to run
+%the downloaded IRIS data through a Quality Control Process. This program
+%is to be run after downloaded data using PyWEED. 
+
+%TO DO: Make sure you don't have to change the file directory every single
+%time. Then, it should be pretty golder for a combined sorting function!
+%Then just test it, debug it, and clean up the documentation.
+%}
+function main(master_path)
+SACtoMATB_2023Z;
+sorter_RT_2023Z(master_path)
+end
+
+function sorter_RT_2023Z(master_path) %FUNCTION REFACTOR IN PROGRESS
+%% Instructions and Details
+%This program is used for Ryker Tracy Thesis 2023. It sorts files
+%downloaded from PyWEED into folders titled the time of the event. Each
+%event directory will contain all files that claim it as the associated
+%event. Admittedly, it's not the most effecient, where you will need to
+%change all lines that contain desired directories every time you want to
+%run it.
+
+%I strongly recommend reading all comments in this program before running
+%it to understand relevant syntax.
+
+%% Create 'sorted_by_events' directory, then sort through files and gather relevant information
+cd(master_path); mkdir  sorted_by_events; mkdir sorted_by_station; %Change path to master directory and create a new folder for sorting by events and storing by station.
+events_path = [master_path, '\sorted_by_events'];
+stations_path = [master_path, '\sorted_by_station']
+files=[];
+%Self note: this next line just returns a list of the contents of the
+%directory. Change it to cycle through every directory.
+files_t=dir(['MAT']); %Change with for every folder you want to sort
+
+for n=3:length(files_t) %Goes through the files and gathers relevant information
+    file=[master_path '\MAT\' files_t(n).name]; %Change directory accordingly.
+    load(file);
+    files(n).name = files_t(n).name;
+    files(n).eventnames = data.evdate_string;
+    files(n).eventlat = data.event_lat;
+    files(n).eventlon = data.event_lon;
+end
+%Self note: The above for loop contains all the information necessary to
+%also store by station.
+
+%% Define variables and sort them into arrays.
+%We found that the same event was recorded several times with a small fraction of a second difference.
+%The following bit will round the event time and gather all of the information into a unique event.  
+filename = {files(3:end).name};
+%The next line was brought over from the station sorter.
+newfilename = extractBefore(filename,'HZ');
+for i = 1:length(newfilename);
+    newfilename{i} = newfilename{i}(1:end-2);
+end
+unique_station = unique(newfilename);
+%__________________________________________ End copy from station sorter.
+events = {files(3:end).eventnames};
+rounded_events = cellfun(@(x) [x(1:end-2)], events, 'UniformOutput', false);
+lat = {files(3:end).eventlat};
+lon = {files(3:end).eventlon};
+tableofshit = [filename; rounded_events; lat; lon];
+stuff = [rounded_events; lat; lon];
+unique_events = unique(rounded_events);
+
+%Create a table of event times, latitude, and longitude to determine if the
+%difference in .001 seconds between unique events is the
+% same lat and lon
+%or if they're truly different events. It appears to be a rounding error.
+[~, idx] = ismember(unique_events, rounded_events);
+stuff1 = stuff(:,idx);
+%Next line is copied over from station_sorter. I think it should work
+%becasue it will reset the idx variables, and we don't use them again. We
+%realy only need stuff1 and listofstations.
+[~, idx] = ismember(unique_station, newfilename);
+listofstations = newfilename(idx);
+
+%% Optimize file names, create folders with unique events as names, and copy files into them.
+%Replace the colons in the event times with underscores for file creation.
+rounded_events = cellfun(@(x) strrep(x, ':', '_'), rounded_events, 'UniformOutput', false);
+unique_events = cellfun(@(x) strrep(x, ':', '_'), unique_events, 'UniformOutput', false);
+
+cd(events_path); %Enter sorted by events directory
+%Create a bunch of directories with unique event times as names
+for ii=1:numel(unique_events)
+    mkdir(unique_events{ii}); 
+end
+
+%Take the filename that corresponds to the event time and place into new
+%directory
+for ii=1:length(files(3:end))
+    current_rounded_event = rounded_events{ii};
+    current_filename = ['D:\Seismic Data\Pn_DATA_3p5_3p6_2014_2023_East\MAT\' filename{ii}]; %Change path to reflect copy.
+    copyfile(current_filename, [events_path '\' current_rounded_event]); %Change Path here too.
+end 
+
+%% Make Directories based on station name
+%Create a bunch of directories with unique event times as names
+cd(stations_path);
+for ii=1:numel(unique_station)
+    mkdir(unique_station{ii});
+end
+
+%Take the filename that corresponds to the event time and place into new
+%directory
+for ii=1:length(files(3:end))
+    current_station = newfilename{ii};
+    current_filename = ['D:\Seismic Data\Pn_DATA_3p5_3p6_2014_2023_East\MAT\' filename{ii}]; %Change path to reflect copy.
+    copyfile(current_filename, [stations_path '\' current_station]); %Change Path here too.
+end
+end

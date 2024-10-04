@@ -1,3 +1,5 @@
 Reviewed/**
 Notes.txt
 test/**
+!test/main.asv
+!test/main.m
