@@ -10,7 +10,31 @@
 %to get it to work out.
 %}
 function main(master_path)
+subdirs = dir(master_path);
+subdirs = subdirs([subdirs(:).isdir]); % only keep directories
+subdirs = subdirs(~ismember({subdirs(:).name},{'.','..'})); % remove . and ..
 SACtoMATB_2023Z;
+for i=1:length(subdirs)
+    currentDir = fullfile(master_path,subdirs(i).name);
+    cd(currentDir);
+    sacFiles = dir('*.sac');
+    if ~isempty(sacFiles)
+        SACtoMATB_2023Z;
+        matPath = fullfile(pwd, 'MAT');
+        matFiles = dir(fullfile(matPath, '*.*'));
+        matFiles = matFiles(~ismember({matFiles.name}, {'.', '..'})); % Remove '.' and '..'
+        for k = 1:length(matFiles)
+            sourceFile = fullfile(matPath, matFiles(k).name);
+            destinationFile = fullfile(master_path, 'MAT');
+            
+            copyfile(sourceFile, destinationFile);
+        end
+    else
+        fprintf('No .sac files found in directory %s\n', currentDir);
+    end
+    
+end
+cd(master_path)
 sorter_RT_2023Z(master_path)
 end
 
@@ -29,7 +53,7 @@ function sorter_RT_2023Z(master_path) %FUNCTION REFACTOR IN PROGRESS
 %% Create 'sorted_by_events' directory, then sort through files and gather relevant information
 cd(master_path); mkdir  sorted_by_events; mkdir sorted_by_station; %Change path to master directory and create a new folder for sorting by events and storing by station.
 events_path = [master_path, '\sorted_by_events'];
-stations_path = [master_path, '\sorted_by_station']
+stations_path = [master_path, '\sorted_by_station'];
 files=[];
 %Self note: this next line just returns a list of the contents of the
 %directory. Change it to cycle through every directory.

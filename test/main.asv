@@ -3,12 +3,33 @@
 %the downloaded IRIS data through a Quality Control Process. This program
 %is to be run after downloaded data using PyWEED. 
 
-%TO DO: Make sure you don't have to change the file directory every single
-%time. Then, it should be pretty golder for a combined sorting function!
-%Then just test it, debug it, and clean up the documentation.
+%TO DO: The program runs, just make sure the directory structure will work
+%no matter the structure that the user has. Have it go into each
+%subdirectory and look for a .sac file. If it has one or more, that's where
+%it creates a new MAT folder. Then those files are sorted. Figure out a way
+%to get it to work out.
 %}
 function main(master_path)
+subdirs = dir(master_path);
+subdirs = subdirs([subdirs(:).isdir]); % only keep directories
+subdirs = subdirs(~ismember({subdirs(:).name},{'.','..'})); % remove . and ..
+
 SACtoMATB_2023Z;
+for i=1:length(subdirs)
+    currentDir = subdirs{i};
+    cd(currendDir);
+    sacFiles = dir('*.sac');
+    if ~isempty(sacFiles)
+        SACtoMATB_2023Z;
+        matPath = fullfile(pwd, 'MAT');
+        matFiles = dir(fullfile(matPath, '*'))
+
+    else
+        fprintf('No .sac files found in directory %s\n', currentDir);
+    end
+    
+    
+end
 sorter_RT_2023Z(master_path)
 end
 
@@ -90,7 +111,7 @@ end
 %directory
 for ii=1:length(files(3:end))
     current_rounded_event = rounded_events{ii};
-    current_filename = ['D:\Seismic Data\Pn_DATA_3p5_3p6_2014_2023_East\MAT\' filename{ii}]; %Change path to reflect copy.
+    current_filename = [master_path '\MAT\' filename{ii}]; %Change path to reflect copy.
     copyfile(current_filename, [events_path '\' current_rounded_event]); %Change Path here too.
 end 
 
@@ -105,7 +126,8 @@ end
 %directory
 for ii=1:length(files(3:end))
     current_station = newfilename{ii};
-    current_filename = ['D:\Seismic Data\Pn_DATA_3p5_3p6_2014_2023_East\MAT\' filename{ii}]; %Change path to reflect copy.
+    current_filename = [master_path '\MAT\' filename{ii}]; %Change path to reflect copy.
     copyfile(current_filename, [stations_path '\' current_station]); %Change Path here too.
 end
+cd(master_path)
 end
