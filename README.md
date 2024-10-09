@@ -11,7 +11,15 @@ Then: Update documentation on all programs. Commit each change to a program with
 Then: Begin refactoring programs. This includes making them more user friendly, combining files where possible, and amplifying effeciency.
 
 ## Programs 
+In the Main Programs folder, four programs can be found that will call all of the supporting functions.
+
 qc_main(master_path).m - Is a combination of functions that will allow for a more streamline QC process. Elements of the combined files have been removed based on lack of use, like event_information tables that were unused. Do access these, see the archive folder.
+
+parrival_main().m
+
+inversion_prep_main().m
+
+pnp_tomography_main(file, xcell, Vavg, LagS, dLag, LagR, tol, elim).m - Allows the user to select one of four slightly difference inversion programs that will produce a visual model of the moho velocity variations. These files will create the shapes for Texas, New Mexico, and Oklahoma, so be sure to alter those as needed.
 
 ## Original Workflow
 Data downloaded from PyWeed was originally in SAC format. The first step was to translate from SAC to MAT through the "SACtoMATB_2023Z.m" program. "rdsac.m" and "SACTOOLB_2023Z.m" are depended on by the program, and I did not write them--the first came from Mathworks and the second from a previous Texas Tech student. "plot_data_map_RT_2023Z.m" can spatially display the events and stations.
