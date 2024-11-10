@@ -25,9 +25,3 @@ Delete_badfiles_from_events.m - Delets files from the events directories. **NEED
 Clean_Signal_Identifier_2023Z.m - Finds signals with a clean signal to noise ratio and places it into an array called 'clean_signal.mat'.
 
 make_data_list.m - creates a .mat file that serves as a Master for all the data available. Created on April 14, 2023.
-
-
-
-## Notes to self/TO DO 
-Waveform_Auditor was important, but I don't quite remember to how to operate it. It's not in gitHub yet. let's make sure we understand how it's used properly.
-
